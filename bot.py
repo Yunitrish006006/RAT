@@ -4,7 +4,7 @@ import discord
 intents = discord.Intents.default()
 intents.members = True
 
-client = discord.Client(command_prefix="/", intents=intents)
+client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
