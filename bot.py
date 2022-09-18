@@ -1,45 +1,24 @@
+from discord.ext import commands
 import discord
 
-intents = discord.Intents.default()
-intents.members = True
+# intents = discord.Intents.default()
+# intents.members = True
+# bot = discord.bot(intents=intents)
 
-client = discord.Client(intents=intents)
-client = commands.Client(command_prefix="!")
+bot = commands.bot(command_prefix="!")
 
-@client.event
+@bot.event
 async def on_ready():
-    print('Login As：', client.user)
-    game = discord.Game('lol')
-    await client.change_presence(status=discord.Status.online, activity=game)
+    print("勞贖出現了!")
 
-@bot.command()
-async def hello(context):
-    await context.send(f"!Hi <@{context.author.id}>")
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.content == "test" or message.content == "Test":
-        await message.channel.send('Hi')
-
-    if message.content.startswith('!'):
-      tmp = message.content.split(" ",2)
-      if len(tmp) == 1:
-        await message.channel.send("?")
-      else:
-        await message.channel.send(tmp[1])
-
-@bot.event
-async def on_member_join(member):
-   await self.bot.get_channel(idchannel).send(f"{ member.name } has joined")
-
-@bot.event
-async def on_member_remove(member):
-   await self.bot.get_channel(idchannel).send(f"{ member.name } has left")
+# @bot.event
+# async def on_ready():
+#     print('Login As：', bot.user)
+#     game = discord.Game('lol')
+#     await bot.change_presence(status=discord.Status.online, activity=game)
 
 import json
 
 with open('items.json',"r",encoding="utf8") as file:
     data = json.load(file)
-client.run(data['token'])
+bot.run(data['token'])
