@@ -1,10 +1,10 @@
-from genericpath import commonprefix
 import discord
 
 intents = discord.Intents.default()
 intents.members = True
 
 client = discord.Client(intents=intents)
+client = commands.Client(command_prefix="!")
 
 @client.event
 async def on_ready():
