@@ -12,6 +12,10 @@ async def on_ready():
     game = discord.Game('lol')
     await client.change_presence(status=discord.Status.online, activity=game)
 
+@bot.command()
+async def hello(context):
+    await context.send(f"!Hi <@{context.author.id}>")
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
@@ -25,6 +29,14 @@ async def on_message(message):
         await message.channel.send("?")
       else:
         await message.channel.send(tmp[1])
+
+@bot.event
+async def on_member_join(member):
+   await self.bot.get_channel(idchannel).send(f"{ member.name } has joined")
+
+@bot.event
+async def on_member_remove(member):
+   await self.bot.get_channel(idchannel).send(f"{ member.name } has left")
 
 import json
 
