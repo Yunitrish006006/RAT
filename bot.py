@@ -10,11 +10,11 @@ bot = commands.Bot(intents=intents , command_prefix="!")
 async def on_ready():
     print("勞贖出現了!")
 
-# @bot.event
-# async def on_ready():
-#     print('Login As：', bot.user)
-#     game = discord.Game('lol')
-#     await bot.change_presence(status=discord.Status.online, activity=game)
+@bot.event
+async def on_ready():
+    print('Login As：', bot.user)
+    game = discord.Game('Eating oil')
+    await bot.change_presence(status=discord.Status.online, activity=game)
 
 import json
 
