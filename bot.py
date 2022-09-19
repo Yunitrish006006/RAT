@@ -1,11 +1,10 @@
 from discord.ext import commands
 import discord
 
-# intents = discord.Intents.default()
-# intents.members = True
-# bot = discord.bot(intents=intents)
+intents = discord.Intents.default()
+intents.members = True
 
-bot = commands.bot(command_prefix="!")
+bot = commands.Bot(intents=intents , command_prefix="!")
 
 @bot.event
 async def on_ready():
