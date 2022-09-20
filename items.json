@@ -4,10 +4,10 @@
     "Leave_channel":"1021197140892061778",
 
     "local_picture":[
-        "C:\\Users\\thoma\\Desktop\\RAT\\Picture\\happy_face.png",
-        "C:\\Users\\thoma\\Desktop\\RAT\\Picture\\sad_face.png",
-        "C:\\Users\\thoma\\Desktop\\RAT\\Picture\\pixel_rat.png",
-        "C:\\Users\\thoma\\Desktop\\RAT\\Picture\\rat.png"
+        "Picture\\happy_face.png",
+        "Picture\\pixel_rat.png",
+        "Picture\rat.png",
+        "Picture\\sad_face.png"
     ],
     "net_picture":[
         "https://img-blog.csdnimg.cn/img_convert/dfebda66f45387136d08afd80c776705.gif",
