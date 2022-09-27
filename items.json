@@ -1,7 +1,7 @@
 {
     "token":"MTAyMDM1OTg0NTU5NTA1NDA4MA.GOf8cn.wOtFJKWl8wR-r1WjM4Lw8dfG_UPFJWxM0sVDLk",
-    "Welcome_channel":"1021197140892061778",
-    "Leave_channel":"1021197140892061778",
+    "Welcome_channel":"1024223977142501424",
+    "Leave_channel":"1024223977142501424",
 
     "local_picture":[
         ".\\Picture\\happy_face.png",
@@ -12,5 +12,9 @@
     "net_picture":[
         "https://img-blog.csdnimg.cn/img_convert/dfebda66f45387136d08afd80c776705.gif",
         "https://g.udn.com.tw/upfiles/B_J3/j3388004/PSN_PHOTO/940/f_9627940_1.gif"
+    ],
+    "key_word":[
+        "88",
+        "jiji"
     ]
 }
