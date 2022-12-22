@@ -37,8 +37,8 @@ class cmds(commands.Cog):
     @commands.command()
     async def dlt(self, ctx, *args):
         mesg = ' '.join(args)
-        # await ctx.message.delete()
         await ctx.send(mesg)
-
+        await ctx.message.delete()
+        
 async def setup(client):
 	await client.add_cog(cmds(client))
