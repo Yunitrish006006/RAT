@@ -3,7 +3,6 @@ from discord import app_commands
 from discord.ui import Button, View, Select
 from discord.utils import get
 import config
-from KEEP_ALIVE import keep_alive
 id1 = 1003642488826900551
 id2 = 1021197140334227456
 class bot_client(discord.Client):
@@ -93,5 +92,4 @@ async def self(interaction:discord.Integration):
     view.add_item(job_select())
     await interaction.response.send_message(f"select your job",view=view,ephemeral=True)
 
-keep_alive()
 client.run(config.token)
