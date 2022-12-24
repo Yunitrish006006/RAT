@@ -16,7 +16,6 @@ class bot_client(discord.Client):
         if not self.synced:
             await tree.sync(guild = discord.Object(id = id3))
             await tree.sync(guild = discord.Object(id = id2))
-            guild_from = get
             await tree.sync(guild = discord.Object(id = id1))
             self.synced = True
         guild = client.get_guild(id3)
