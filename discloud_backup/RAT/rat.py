@@ -5,6 +5,8 @@ from discord.utils import get
 import config
 id1 = 1003642488826900551
 id2 = 1021197140334227456
+id3 = 1006986600951058533
+guild_from = 0
 class bot_client(discord.Client):
     def __init__(self):
         super().__init__(intents=discord.Intents.default())
@@ -12,10 +14,12 @@ class bot_client(discord.Client):
     async def on_ready(self):
         await self.wait_until_ready()
         if not self.synced:
-            # await tree.sync(guild = discord.Object(id = id2))
+            await tree.sync(guild = discord.Object(id = id3))
+            await tree.sync(guild = discord.Object(id = id2))
+            guild_from = get
             await tree.sync(guild = discord.Object(id = id1))
             self.synced = True
-        guild = client.get_guild(id1)
+        guild = client.get_guild(id3)
         if not get(guild.roles,name="⛏️-Miner"): await guild.create_role(name="⛏️-Miner",colour=discord.Colour.dark_gold(),hoist=True)
         if not get(guild.roles,name="🥦-farmer"): await guild.create_role(name="🥦-farmer",colour=discord.Colour.green(),hoist=True)
         if not get(guild.roles,name="⚒️-smith"): await guild.create_role(name="⚒️-smith",colour=discord.Colour.dark_grey(),hoist=True)
@@ -72,7 +76,7 @@ class yes_no_view(View):
     async def callback(self,button,interaction):
         await interaction.response.send_message("yee")
 
-@tree.command(name="test_burron",description="a test button",guild=discord.Object(id = id1))
+@tree.command(name="test_burron",description="a test button")
 async def self(interaction:discord.Integration):
     view = View()
     yb = yes_button()
@@ -81,12 +85,12 @@ async def self(interaction:discord.Integration):
     view.add_item(nb)
     await interaction.response.send_message(f"Test",view=view,ephemeral=True)
 
-@tree.command(name="close",description="turn off this bot globally",guild=discord.Object(id = id2))
+@tree.command(name="close",description="turn off this bot globally")
 async def self(interaction:discord.Integration,check:str):
     await interaction.response.send_message(f"turing off....")
     await client.close()
 
-@tree.command(name="job",description="test of selector",guild=discord.Object(id = id1))
+@tree.command(name="job",description="test of selector")
 async def self(interaction:discord.Integration):
     view = View()
     view.add_item(job_select())
