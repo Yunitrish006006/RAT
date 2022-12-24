@@ -28,10 +28,6 @@ class bot_client(discord.Client):
 client = bot_client()
 tree = app_commands.CommandTree(client)
 
-@tree.command(name="test",description="a test command",guild=discord.Object(id = 1021197140334227456))
-async def self(interaction:discord.Integration,name: str):
-    await interaction.response.send_message(f"Test:{name}")
-
 class yes_button(Button):
     def __init__(self):
         super().__init__(label="Yes",style=discord.ButtonStyle.green,emoji="👌")
@@ -75,21 +71,25 @@ class yes_no_view(View):
     async def callback(self,button,interaction):
         await interaction.response.send_message("yee")
 
-@tree.command(name="test_burron",description="a test button")
+@tree.command(name="test",description="a test command",guild=discord.Object(id=id3))
+async def self(interaction:discord.Integration,name: str):
+    await interaction.response.send_message(f"Test:{name}")
+
+@tree.command(name="test_button",description="a test button",guild=discord.Object(id=id3))
 async def self(interaction:discord.Integration):
     view = View()
     yb = yes_button()
     nb = no_button()
     view.add_item(yb)
     view.add_item(nb)
-    await interaction.response.send_message(f"Test",view=view,ephemeral=True)
+    await interaction.response.send_message(f"Test",view=view,ephemeral=True,guild=discord.Object(id=id3))
 
-@tree.command(name="close",description="turn off this bot globally")
+@tree.command(name="close",description="turn off this bot globally",guild=discord.Object(id=id3))
 async def self(interaction:discord.Integration,check:str):
     await interaction.response.send_message(f"turing off....")
     await client.close()
 
-@tree.command(name="job",description="test of selector")
+@tree.command(name="job",description="test of selector",guild=discord.Object(id=id3))
 async def self(interaction:discord.Integration):
     view = View()
     view.add_item(job_select())
