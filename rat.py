@@ -15,8 +15,8 @@ class bot_client(discord.Client):
         await self.wait_until_ready()
         if not self.synced:
             await tree.sync(guild = discord.Object(id = id3))
-            await tree.sync(guild = discord.Object(id = id2))
-            await tree.sync(guild = discord.Object(id = id1))
+            # await tree.sync(guild = discord.Object(id = id2))
+            # await tree.sync(guild = discord.Object(id = id1))
             self.synced = True
         guild = client.get_guild(id3)
         if not get(guild.roles,name="⛏️-Miner"): await guild.create_role(name="⛏️-Miner",colour=discord.Colour.dark_gold(),hoist=True)
