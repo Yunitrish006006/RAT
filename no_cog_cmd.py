@@ -17,10 +17,10 @@ class bot_client(discord.Client):
             await tree.sync(guild = discord.Object(id = id1))
             self.synced = True
         guild = client.get_guild(id1)
-        await guild.create_role(name="⛏️-Miner",colour=discord.Colour.dark_gold(),hoist=True)
-        await guild.create_role(name="🥦-farmer",colour=discord.Colour.green(),hoist=True)
-        await guild.create_role(name="⚒️-smith",colour=discord.Colour.dark_grey(),hoist=True)
-        await guild.create_role(name="🏹-hunter",colour=discord.Colour.from_rgb(139,69,19),hoist=True)
+        if len(get(guild.roles,name="⛏️-Miner"))==0: await guild.create_role(name="⛏️-Miner",colour=discord.Colour.dark_gold(),hoist=True)
+        if len(get(guild.roles,name="🥦-farmer"))==0: await guild.create_role(name="🥦-farmer",colour=discord.Colour.green(),hoist=True)
+        if len(get(guild.roles,name="⚒️-smith"))==0: await guild.create_role(name="⚒️-smith",colour=discord.Colour.dark_grey(),hoist=True)
+        if len(get(guild.roles,name="🏹-hunter"))==0: await guild.create_role(name="🏹-hunter",colour=discord.Colour.from_rgb(139,69,19),hoist=True)
         print(f"logged in as {self.user}")
 
 client = bot_client()
