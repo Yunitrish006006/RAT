@@ -8,6 +8,12 @@ guilds = [
     1006986600951058533
 ]
 token="MTAyMDM1OTg0NTU5NTA1NDA4MA.GOf8cn.wOtFJKWl8wR-r1WjM4Lw8dfG_UPFJWxM0sVDLk"
+jobs = [
+    discord.SelectOption(label="miner",emoji="⛏️",description="a career that can get lot of jeweris"),
+    discord.SelectOption(label="farmer",emoji="🥦",description="a career that can grow foods"),
+    discord.SelectOption(label="smith",emoji="⚒️",description="a career that can make tools and weapons"),
+    discord.SelectOption(label="hunter",emoji="🏹",description="a career that can get meats from nature")
+]
 class bot_client(discord.Client):
     def __init__(self):
         super().__init__(intents=discord.Intents.default())
@@ -20,9 +26,8 @@ class bot_client(discord.Client):
             self.synced = True
         for i in guilds:
             guild = client.get_guild(i)
-            careers = ["⛏️.miner","🥦.farmer","⚒️.smith","🏹.hunter"]
             career_colors = [discord.Colour.dark_gold(),discord.Colour.green(),discord.Colour.dark_grey(),discord.Colour.from_rgb(139,69,19)]
-            for career,color in zip(careers,career_colors):
+            for career,color in zip([i.emoji.name+"."+i.label for i in jobs],career_colors):
                 if not get(guild.roles,name=career):
                     await guild.create_role(name=career,colour=color,hoist=True)
         print(f"logged in as {self.user}")
@@ -44,28 +49,20 @@ class no_button(Button):
 
 class job_select(Select):
     def __init__(self):
-        list = [
-            discord.SelectOption(label="miner",emoji="⛏️",description="a career that can get lot of jeweris"),
-            discord.SelectOption(label="farmer",emoji="🥦",description="a career that can grow foods"),
-            discord.SelectOption(label="smith",emoji="⚒️",description="a career that can make tools and weapons"),
-            discord.SelectOption(label="hunter",emoji="🏹",description="a career that can get meats from nature")
-        ]
-        super().__init__( placeholder ="select your job", min_values=1, max_values=1,  options=list)
+        super().__init__(
+            placeholder ="select your job",
+            min_values=1,
+            max_values=1,
+            options=jobs
+        )
     async def callback(self, interaction: discord.Interaction):
         user = interaction.user
         guild = interaction.guild
-        careers = [
-            get(guild.roles, name="⛏️.miner"),
-            get(guild.roles, name="🥦.farmer"),
-            get(guild.roles, name="⚒️.smith"),
-            get(guild.roles, name="🏹.hunter")
-        ]
         await interaction.response.send_message(f"{user.name} select {self.values[0]} as job",ephemeral=True)
-        for i in careers:
-            if i.name.split(".")[1] == self.values[0]:
-                await user.add_roles(i)
-            else:
-                await user.remove_roles(i)
+        for i in self.options:
+            current =  get(guild.roles, name=i.emoji.name+"."+i.label)
+            if current.name.split(".")[1] == self.values[0]: await user.add_roles(current)
+            else:  await user.remove_roles(current)
 
 class yes_no_view(View):
     @discord.ui.button(label="Yes",style=discord.ButtonStyle.green,emoji="👌")
