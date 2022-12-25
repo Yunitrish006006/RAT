@@ -2,11 +2,12 @@ import discord
 from discord import app_commands
 from discord.ui import Button, View, Select
 from discord.utils import get
-import config
-id1 = 1003642488826900551
-id2 = 1021197140334227456
-id3 = 1006986600951058533
-guild_from = 0
+guilds = [
+    1021197140334227456,
+    764126539041734679,
+    1006986600951058533
+]
+token="MTAyMDM1OTg0NTU5NTA1NDA4MA.GOf8cn.wOtFJKWl8wR-r1WjM4Lw8dfG_UPFJWxM0sVDLk"
 class bot_client(discord.Client):
     def __init__(self):
         super().__init__(intents=discord.Intents.default())
@@ -14,15 +15,16 @@ class bot_client(discord.Client):
     async def on_ready(self):
         await self.wait_until_ready()
         if not self.synced:
-            await tree.sync(guild = discord.Object(id = id3))
-            # await tree.sync(guild = discord.Object(id = id2))
-            # await tree.sync(guild = discord.Object(id = id1))
+            for guild_id in guilds:
+                await tree.sync(guild=discord.Object(id=guild_id))
             self.synced = True
-        guild = client.get_guild(id3)
-        if not get(guild.roles,name="⛏️-Miner"): await guild.create_role(name="⛏️-Miner",colour=discord.Colour.dark_gold(),hoist=True)
-        if not get(guild.roles,name="🥦-farmer"): await guild.create_role(name="🥦-farmer",colour=discord.Colour.green(),hoist=True)
-        if not get(guild.roles,name="⚒️-smith"): await guild.create_role(name="⚒️-smith",colour=discord.Colour.dark_grey(),hoist=True)
-        if not get(guild.roles,name="🏹-hunter"): await guild.create_role(name="🏹-hunter",colour=discord.Colour.from_rgb(139,69,19),hoist=True)
+        for i in guilds:
+            guild = client.get_guild(i)
+            careers = ["⛏️.Miner","🥦.farmer","⚒️.smith","🏹.hunter"]
+            career_colors = [discord.Colour.dark_gold(),discord.Colour.green(),discord.Colour.dark_grey(),discord.Colour.from_rgb(139,69,19)]
+            for career,color in zip(careers,career_colors):
+                if not get(guild.roles,name=career):
+                    await guild.create_role(name=career,colour=color,hoist=True)
         print(f"logged in as {self.user}")
 
 client = bot_client()
@@ -52,47 +54,51 @@ class job_select(Select):
     async def callback(self, interaction: discord.Interaction):
         user = interaction.user
         guild = interaction.guild
+        careers = [
+            get(guild.roles, name="⛏️.Miner"),
+            get(guild.roles, name="🥦.farmer"),
+            get(guild.roles, name="⚒️.smith"),
+            get(guild.roles, name="🏹.hunter")
+        ]
         await interaction.response.send_message(f"{user.name},You have select {self.values[0]} as your job",ephemeral=True)
+        await user.remove_roles(careers)
         if self.values[0] == "miner":
-            role = get(guild.roles, name="⛏️-Miner")
-            await user.edit(roles=[role])
+            await user.add_roles(careers[0])
         elif self.values[0] == "farmer":
-            role = get(guild.roles, name="🥦-farmer")
-            await user.edit(roles=[role])
+            await user.add_roles(careers[1])
         elif self.values[0] == "smith":
-            role = get(guild.roles, name="⚒️-smith")
-            await user.edit(roles=[role])
+            await user.add_roles(careers[2])
         elif self.values[0] == "hunter":
-            role = get(guild.roles, name="🏹-hunter")
-            await user.edit(roles=[role])
+            await user.add_roles(careers[3])
 
 class yes_no_view(View):
     @discord.ui.button(label="Yes",style=discord.ButtonStyle.green,emoji="👌")
     async def callback(self,button,interaction):
         await interaction.response.send_message("yee")
+for guild_id in guilds:
+    @tree.command(name="test",description="a test command",guild=discord.Object(id=guild_id))
+    async def self(interaction:discord.Integration,name: str):
+        await interaction.response.send_message(f"Test:{name}")
 
-@tree.command(name="test",description="a test command",guild=discord.Object(id=id3))
-async def self(interaction:discord.Integration,name: str):
-    await interaction.response.send_message(f"Test:{name}")
+    @tree.command(name="test_button",description="a test button",guild=discord.Object(id=guild_id))
+    async def self(interaction:discord.Integration):
+        view = View()
+        yb = yes_button()
+        nb = no_button()
+        view.add_item(yb)
+        view.add_item(nb)
+        await interaction.response.send_message(f"Test",view=view,ephemeral=True)
 
-@tree.command(name="test_button",description="a test button",guild=discord.Object(id=id3))
-async def self(interaction:discord.Integration):
-    view = View()
-    yb = yes_button()
-    nb = no_button()
-    view.add_item(yb)
-    view.add_item(nb)
-    await interaction.response.send_message(f"Test",view=view,ephemeral=True,guild=discord.Object(id=id3))
+    @tree.command(name="close",description="turn off this bot globally",guild=discord.Object(id=guild_id))
+    async def self(interaction:discord.Integration,password:str):
+        if password=="ratoff":
+            await interaction.response.send_message(f"turing off rat .....")
+            await client.close()
 
-@tree.command(name="close",description="turn off this bot globally",guild=discord.Object(id=id3))
-async def self(interaction:discord.Integration,check:str):
-    await interaction.response.send_message(f"turing off....")
-    await client.close()
+    @tree.command(name="job",description="test of selector",guild=discord.Object(id=guild_id))
+    async def self(interaction:discord.Integration):
+        view = View()
+        view.add_item(job_select())
+        await interaction.response.send_message(f"select your job",view=view,ephemeral=True)
 
-@tree.command(name="job",description="test of selector",guild=discord.Object(id=id3))
-async def self(interaction:discord.Integration):
-    view = View()
-    view.add_item(job_select())
-    await interaction.response.send_message(f"select your job",view=view,ephemeral=True)
-
-client.run(config.token)
+client.run(token)
