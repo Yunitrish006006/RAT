@@ -20,7 +20,7 @@ class bot_client(discord.Client):
             self.synced = True
         for i in guilds:
             guild = client.get_guild(i)
-            careers = ["⛏️.Miner","🥦.farmer","⚒️.smith","🏹.hunter"]
+            careers = ["⛏️.miner","🥦.farmer","⚒️.smith","🏹.hunter"]
             career_colors = [discord.Colour.dark_gold(),discord.Colour.green(),discord.Colour.dark_grey(),discord.Colour.from_rgb(139,69,19)]
             for career,color in zip(careers,career_colors):
                 if not get(guild.roles,name=career):
@@ -45,31 +45,27 @@ class no_button(Button):
 class job_select(Select):
     def __init__(self):
         list = [
-            discord.SelectOption(label="miner",emoji="⛏️",description="as u can see"),
-            discord.SelectOption(label="farmer",emoji="🥦",description="as u can see"),
-            discord.SelectOption(label="smith",emoji="⚒️",description="as u can see"),
-            discord.SelectOption(label="hunter",emoji="🏹",description="as u can see")
+            discord.SelectOption(label="miner",emoji="⛏️",description="a career that can get lot of jeweris"),
+            discord.SelectOption(label="farmer",emoji="🥦",description="a career that can grow foods"),
+            discord.SelectOption(label="smith",emoji="⚒️",description="a career that can make tools and weapons"),
+            discord.SelectOption(label="hunter",emoji="🏹",description="a career that can get meats from nature")
         ]
         super().__init__( placeholder ="select your job", min_values=1, max_values=1,  options=list)
     async def callback(self, interaction: discord.Interaction):
         user = interaction.user
         guild = interaction.guild
         careers = [
-            get(guild.roles, name="⛏️.Miner"),
+            get(guild.roles, name="⛏️.miner"),
             get(guild.roles, name="🥦.farmer"),
             get(guild.roles, name="⚒️.smith"),
             get(guild.roles, name="🏹.hunter")
         ]
-        await interaction.response.send_message(f"{user.name},You have select {self.values[0]} as your job",ephemeral=True)
-        await user.remove_roles(careers)
-        if self.values[0] == "miner":
-            await user.add_roles(careers[0])
-        elif self.values[0] == "farmer":
-            await user.add_roles(careers[1])
-        elif self.values[0] == "smith":
-            await user.add_roles(careers[2])
-        elif self.values[0] == "hunter":
-            await user.add_roles(careers[3])
+        await interaction.response.send_message(f"{user.name} select {self.values[0]} as job",ephemeral=True)
+        for i in careers:
+            if i.name.split(".")[1] == self.values[0]:
+                await user.add_roles(i)
+            else:
+                await user.remove_roles(i)
 
 class yes_no_view(View):
     @discord.ui.button(label="Yes",style=discord.ButtonStyle.green,emoji="👌")
