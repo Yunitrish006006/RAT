@@ -3,10 +3,10 @@ from discord import app_commands
 from discord.ui import Button, View, Select
 from discord.utils import get
 from discord import Colour
-
+from Log import log
 NCUE = 764126539041734679
 token="MTAyMDM1OTg0NTU5NTA1NDA4MA.GOf8cn.wOtFJKWl8wR-r1WjM4Lw8dfG_UPFJWxM0sVDLk"
-guild_list = []
+guild_list: discord.Client.guilds = []
 jobs = [
     discord.SelectOption(label="miner",emoji="⛏️",description="a career that can get lot of jeweris"),
     discord.SelectOption(label="farmer",emoji="🥦",description="a career that can grow foods"),
@@ -21,6 +21,8 @@ departments = [
 ]
 grades = [discord.SelectOption(label=str(i)) for i in range(109,115)]
 
+GIDS = []
+
 async def initialize_roles(guild_id,selections:list[discord.SelectOption],colors:list[discord.Colour]):
     guild = client.get_guild(guild_id)
     for n in range(len(selections)):
@@ -28,28 +30,35 @@ async def initialize_roles(guild_id,selections:list[discord.SelectOption],colors
         else: val = (selections[n].emoji).name+"."+selections[n].label
         if not get(guild.roles,name=val): 
             await guild.create_role(name=val,hoist=True,colour=colors[n])
-
+history = log()
 class bot_client(discord.Client):
     def __init__(self):
         super().__init__(intents=discord.Intents.default())
         self.synced = False
+        global guild_obj_list
+        guild_obj_list = [
+            discord.Object(id=1003642488826900551),
+            discord.Object(id=1058639961500426320)
+        ]
     async def on_ready(self):
-        global guild_list
+        global history,guild_list,guild_obj_list2,GIDS
+        guild_obj_list2 = [str(i.name)+" , "+str(i.id) for i in client.guilds]
         await self.wait_until_ready()
         guild_list = [g for g in client.guilds]
         remove_list = []
         for g in guild_list:
-            if g.name not in ['彰化師範大學','無名氏','三隻狗']:
+            if g.name not in ['彰化師範大學','無名氏','三隻狗','Yun 的伺服器']:
                 remove_list.append(g)
-                print("🔴  " + g.name)
+                history.println("🔴  " + g.name)
             else:
-                print("🟢  " + g.name)
-        for i in remove_list: guild_list.remove(i)
-
+                history.println("🟢  " + g.name)
+        for i in remove_list:
+            guild_list.remove(i)
+        for i in guild_list: GIDS.append(i.id)
         
         if not self.synced:
             for g in guild_list:
-                print("Synchronizing "+g.name+".....")
+                history.println("Synchronizing "+g.name+".....")
                 await tree.sync(guild=discord.Object(id=g.id))
             self.synced = True
         for i in guild_list:
@@ -58,7 +67,8 @@ class bot_client(discord.Client):
                 await initialize_roles(guild_id=i.id,selections=departments+grades,colors=[Colour.blue() for _ in range(len(departments+grades))])
             else:
                 await initialize_roles(guild_id=i.id,selections=jobs,colors=career_colors)
-        print(f"logged in as {self.user}")
+        history.println("logged in as " + self.user.display_name)
+        print(history.show())
 
 client = bot_client()
 tree = app_commands.CommandTree(client)
@@ -125,30 +135,45 @@ class select_view(View):
         super().__init__(timeout=timeout)
         self.add_item(item)
 
+triple_dog = discord.Object(id=1003642488826900551)
+
+@tree.command(name="查詢機器人服務伺服器",description="查詢機器所在的服務器",guilds=guild_obj_list)
+async def self(i:discord.Interaction):
+    guilds = i.client.guilds
+    len(guilds)
+    show = "⚙️\n"
+    for guild in guilds: show+="["+str(guild.id)+"] "+guild.name+"\n"
+    print(show)
+
+@tree.command(name="查詢機器人紀錄",description="顯示此次開機以後的所有過程",guilds=guild_obj_list)
+async def self(i:discord.Interaction):
+    await i.response.send_message(f"{history.show()}")
+
+
 for g in guild_list:
-    @tree.command(name="test",description="a test command",guild=g)
-    async def self(interaction:discord.Integration,name: str):
+    @tree.command(name="test",description="a test command",guild=discord.Object(id=g.id))
+    async def self(interaction:discord.Interaction,name: str):
         await interaction.response.send_message(f"Test:{name}")
 
-    @tree.command(name="test_button",description="a test button",guild=g)
-    async def self(interaction:discord.Integration):
-        await interaction.response.send_message(f"Test",view=yes_no_view(),ephemeral=True)
+@tree.command(name="test_button",description="a test button",guild=triple_dog)
+async def self(interaction:discord.Interaction):
+    await interaction.response.send_message(f"Test",view=yes_no_view(),ephemeral=True)
 
-    @tree.command(name="close",description="turn off this bot globally",guild=g)
-    async def self(interaction:discord.Integration,password:str):
-        if password=="ratoff":
-            await interaction.response.send_message(f"turing off rat .....")
-            await client.close()
+@tree.command(name="close",description="turn off this bot globally",guild=triple_dog)
+async def self(interaction:discord.Interaction,password:str):
+    if password=="ratoff":
+        await interaction.response.send_message(f"turing off rat .....")
+        await client.close()
 
-    @tree.command(name="job",description="test of selector",guild=g)
-    async def self(interaction:discord.Integration):
-        await interaction.response.send_message(f"select your job",view=select_view(job_select()),ephemeral=True)
-    if(g.id == NCUE):
-        @tree.command(name="選擇科系",description="選擇自己科系以加入相關討論區",guild=g)
-        async def self(interaction:discord.Integration):
-            await interaction.response.send_message(f"選擇你的科系",view=select_view(department_select()),ephemeral=False)
-        @tree.command(name="選擇級數",description="選擇自己級數以加入相關討論區",guild=g)
-        async def self(interaction:discord.Integration):
-            await interaction.response.send_message(f"選擇你的級數",view=select_view(grade_select()),ephemeral=False)
+@tree.command(name="job",description="test of selector",guild=triple_dog)
+async def self(interaction:discord.Interaction):
+    await interaction.response.send_message(f"select your job",view=select_view(job_select()),ephemeral=True)
+# if(g.id == NCUE):
+@tree.command(name="選擇科系",description="選擇自己科系以加入相關討論區",guild=triple_dog)
+async def self(interaction:discord.Interaction):
+    await interaction.response.send_message(f"選擇你的科系",view=select_view(department_select()),ephemeral=False)
+@tree.command(name="選擇級數",description="選擇自己級數以加入相關討論區",guild=triple_dog)
+async def self(interaction:discord.Interaction):
+    await interaction.response.send_message(f"選擇你的級數",view=select_view(grade_select()),ephemeral=False)
 
 client.run(token)
