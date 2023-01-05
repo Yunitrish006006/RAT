@@ -6,6 +6,7 @@ from components import log,pickup
 from discord.utils import get
 from components import jobs,job_colors
 from random import randint
+from x import token
 
 ENABLED_GUILDS:list[discord.Object]=[]
 
@@ -166,4 +167,4 @@ async def report_message(interaction: discord.Interaction, message: discord.Mess
     await log_channel.send(embed=embed, view=url_view)
 
 
-client.run("")
+client.run(token)

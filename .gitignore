@@ -1,4 +1,4 @@
 discloud_backup
 *.zip
 __pycache__
-test.py
+x.py
