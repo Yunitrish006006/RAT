@@ -6,7 +6,7 @@ from discord import Colour
 from Log import log
 from components import available_servers,pickup,jobs,departments,grades,get_ids
 NCUE = 764126539041734679
-token="MTAyMDM1OTg0NTU5NTA1NDA4MA.GOf8cn.wOtFJKWl8wR-r1WjM4Lw8dfG_UPFJWxM0sVDLk"
+token="MTAyMDM1OTg0NTU5NTA1NDA4MA.G9cosw.6xEknoV9nayUjHJFr8vE8_a-UgLOASGya2TZfk"
 guild_list:list[discord.Object] = []
 
 
@@ -136,10 +136,6 @@ async def self(i:discord.Interaction):
     history.println("<"+i.user.name+"> send a command "+self.name)
     await i.response.send_message(f"{history.show()}")
 
-@tree.command(name="test_button",description="a test button",guilds=guild_obj_list)
-async def self(interaction:discord.Interaction):
-    await interaction.response.send_message(f"Test",view=yes_no_view(),ephemeral=True)
-
 @tree.command(name="close",description="turn off this bot globally",guilds=guild_obj_list)
 async def self(interaction:discord.Interaction,password:str):
     if password=="ratoff":
@@ -149,10 +145,11 @@ async def self(interaction:discord.Interaction,password:str):
 @tree.command(name="job",description="test of selector",guilds=guild_obj_list)
 async def self(interaction:discord.Interaction):
     await interaction.response.send_message(f"select your job",view=select_view(job_select()),ephemeral=True)
-# if(g.id == NCUE):
+
 @tree.command(name="選擇科系",description="選擇自己科系以加入相關討論區",guilds=guild_obj_list)
 async def self(interaction:discord.Interaction):
     await interaction.response.send_message(f"選擇你的科系",view=select_view(department_select()),ephemeral=False)
+
 @tree.command(name="選擇級數",description="選擇自己級數以加入相關討論區",guilds=guild_obj_list)
 async def self(interaction:discord.Interaction):
     await interaction.response.send_message(f"選擇你的級數",view=select_view(grade_select()),ephemeral=False)
