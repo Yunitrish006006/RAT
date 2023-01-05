@@ -7,6 +7,8 @@ from discord.utils import get
 from components import jobs,job_colors
 from random import randint
 from x import token
+from datetime import datetime
+import asyncio
 
 ENABLED_GUILDS:list[discord.Object]=[]
 
@@ -104,8 +106,8 @@ class job_select(discord.ui.Select):
 @client.tree.command(name="選擇職業",description="選取職業")
 async def user_work(interaction: discord.Interaction):
     user_name = (interaction.user.name).replace(" ","_")
-    await interaction.response.send_message(f"{user_name},選擇你的職業: ",view=discord.ui.View().add_item(job_select(history=history)),ephemeral=True)
-
+    await interaction.response.send_message(f"{user_name},選擇你的職業: ",ephemeral=True,view=discord.ui.View().add_item(job_select(history=history)))
+    
 @client.tree.command(name="工作",description="賺錢")
 async def user_work(interaction: discord.Interaction):
     earned = str(randint(1,100))
@@ -115,17 +117,15 @@ async def user_work(interaction: discord.Interaction):
     await interaction.response.send_message(f"{user_name} 賺到了 "+earned+" 元\n",ephemeral=True)
     history.println(f"{user_name} 賺到了 "+earned+" 元")
 
-@client.tree.command(name="查詢機器人服務伺服器")
+@client.tree.command(name="查詢機器人服務伺服器",description="查詢機器人服務伺服器")
 async def get_bot_served(interaction: discord.Interaction):
-    """查詢機器人服務伺服器"""
     reply = client.user.mention + "服務於:\n"
     for guild in GUILDS:
         reply += guild.name + "\n"
     await interaction.response.send_message(reply,ephemeral=True)
 
-@client.tree.command(name="查詢機器人執行紀錄")
+@client.tree.command(name="查詢機器人執行紀錄",description="執行紀錄查詢")
 async def get_bot_log(interaction: discord.Interaction):
-    """執行紀錄查詢"""
     await interaction.response.send_message(history.show(),ephemeral=True)
 
 @client.tree.command(name="關閉機器人")
@@ -144,8 +144,7 @@ async def close_bot(interaction: discord.Interaction,password: str):
 async def get_member_join_time(interaction: discord.Interaction, member: Optional[discord.Member] = None):#Optional示範
     """Says when a member joined."""
     member = member or interaction.user
-    await interaction.response.send_message(f'{member} joined {discord.utils.format_dt(member.joined_at)}')
-
+    await interaction.response.send_message(f'{member} joined at {discord.utils.format_dt(member.joined_at)}',ephemeral=True)
 
 #在context_menu中，第二個選項為被作用對象
 
@@ -155,7 +154,7 @@ async def show_member_join_date(interaction: discord.Interaction, member: discor
 
 @client.tree.context_menu(name='舉報給管理者')
 async def report_message(interaction: discord.Interaction, message: discord.Message):
-    await interaction.response.send_message( f'Thanks for reporting this message by {message.author.mention} to our moderators.', ephemeral=True)
+    await interaction.response.send_message(f'Thanks for reporting this message by {message.author.mention} to our moderators.',ephemeral=True)
     log_channel = interaction.guild.get_channel(interaction.channel_id)  # replace with your channel id
     embed = discord.Embed(title='被舉報訊息')
     if message.content:
@@ -165,6 +164,5 @@ async def report_message(interaction: discord.Interaction, message: discord.Mess
     url_view = discord.ui.View()
     url_view.add_item(discord.ui.Button(label='前往該訊息', style=discord.ButtonStyle.url, url=message.jump_url))
     await log_channel.send(embed=embed, view=url_view)
-
 
 client.run(token)
