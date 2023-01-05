@@ -112,6 +112,7 @@ async def user_work(interaction: discord.Interaction):
     with open("database/works.txt",'a') as work_file:
         work_file.write(f"earned {user_name} "+earned+"\n")
     await interaction.response.send_message(f"{user_name} 賺到了 "+earned+" 元\n",ephemeral=True)
+    history.println(f"{user_name} 賺到了 "+earned+" 元")
 
 @client.tree.command(name="查詢機器人服務伺服器")
 async def get_bot_served(interaction: discord.Interaction):
@@ -165,4 +166,4 @@ async def report_message(interaction: discord.Interaction, message: discord.Mess
     await log_channel.send(embed=embed, view=url_view)
 
 
-client.run("MTAyMDM1OTg0NTU5NTA1NDA4MA.G-Vq1n.KPJwmcg3IXAooZLoLRwy_sIq2YtdVLAl_L1cKY")
+client.run("")
