@@ -62,10 +62,9 @@
 ### 配置 frpc.ini
 
     [common]
-    server_addr = frp.4hotel.tw
+    server_addr = 你的撥接伺服器網址
     server_port = 7000
-    #auth_token = 97145312
-    token = 97145312
+    token = 你的撥接伺服器網址密碼
     pool_count = 10000
     authentication_method = token
 
