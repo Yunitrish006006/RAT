@@ -1,4 +1,5 @@
 from typing import Optional
+from unittest import result
 import discord
 import discord.ui
 from discord import app_commands
@@ -9,11 +10,12 @@ from random import randint
 from x import token
 from datetime import datetime
 import asyncio
+import os, sys
+from random import shuffle
 
 ENABLED_GUILDS:list[discord.Object]=[]
 
 GUILDS:list[discord.Guild]=[]
-
 
 class RAT(discord.Client):
     def __init__(self, *, intents: discord.Intents):
@@ -70,7 +72,7 @@ class job_select(discord.ui.Select):
         ########################################################################
         def add_userdata(add):
             out = []
-            lst = [line.strip('\n').split(" ") for line in open('database/jobs.txt').readlines()]
+            lst = [line.strip('\n').split(" ") for line in open(os.getcwd()+'/database/jobs.txt').readlines()]
             for i in lst:
                 cnt = 0
                 #把檔案重複名字更新只留最後一個
@@ -90,7 +92,7 @@ class job_select(discord.ui.Select):
                     cnt += 1
             if cnt == len(out):
                 out.append(add)
-            with open('database/jobs.txt', 'w') as f:
+            with open(os.getcwd()+'/database/jobs.txt', 'w') as f:
                 for i in out:
                     f.write(str(i[0])+" "+str(i[1])+"\n")
         ########################################################################
@@ -103,8 +105,46 @@ class job_select(discord.ui.Select):
             if current.name.split(".")[1] == self.values[0]: await user.add_roles(current)
             else:  await user.remove_roles(current)
 
-@client.tree.command(name="選擇職業",description="選取職業")
+@client.tree.command(name="隨機分隊",description="將語音頻道中的人分成兩隊")
 async def user_work(interaction: discord.Interaction):
+    user_name = (interaction.user.name).replace(" ","_")
+    try:
+        channel = interaction.user.voice.channel
+        if channel:
+            players = [x for x in channel.members]
+            shuffle(players)
+            half = len(players)//2
+            TeamA = players[:half]
+            TeamB = players[half:]
+            temp = f"{channel.name} : {len(players)}人"
+            temp += "\nTeamA: "
+            for a in TeamA: temp+="\n" + a.mention
+            temp += "\nTempB: "
+            for b in TeamB: temp+="\n" + b.mention
+            await interaction.response.send_message(temp)
+                    
+    except AttributeError:
+        await interaction.response.send_message(f"您現在不再語音頻道中\n請進入語音頻道中重試!",ephemeral=True)
+
+@client.tree.command(name="加入語音頻道",description="沒有功能")
+async def joinChannel(interaction: discord.Interaction):
+    user_name = (interaction.user.name).replace(" ","_")
+    try:
+        channel = interaction.user.voice.channel
+        if channel:
+            # for i in client.voice_clients:
+            #     print(i.channel._get_voice_state_pair(),channel._get_voice_state_pair())
+            #     if i.channel._get_voice_state_pair() == channel._get_voice_state_pair():
+            #         print("tri")
+            # i.disconnect()
+            # await channel.guild.voice_client.disconnect()
+            await channel.connect()
+            await interaction.response.send_message("機器人加入頻道!",ephemeral=True)
+    except AttributeError:
+        await interaction.response.send_message(f"您現在不再語音頻道中\n請進入語音頻道中重試!",ephemeral=True)
+
+@client.tree.command(name="選擇職業",description="選取職業")
+async def user_work(interaction: discord.Interaction) -> None:
     user_name = (interaction.user.name).replace(" ","_")
     await interaction.response.send_message(f"{user_name},選擇你的職業: ",ephemeral=True,view=discord.ui.View().add_item(job_select(history=history)))
     
@@ -112,7 +152,7 @@ async def user_work(interaction: discord.Interaction):
 async def user_work(interaction: discord.Interaction):
     earned = str(randint(1,100))
     user_name = (interaction.user.name).replace(" ","_")
-    with open("database/works.txt",'a') as work_file:
+    with open(os.getcwd()+"/database/works.txt",'a') as work_file:
         work_file.write(f"earned {user_name} "+earned+"\n")
     await interaction.response.send_message(f"{user_name} 賺到了 "+earned+" 元\n",ephemeral=True)
     history.println(f"{user_name} 賺到了 "+earned+" 元")
