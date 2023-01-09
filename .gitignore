@@ -2,4 +2,3 @@ discloud_backup
 *.zip
 __pycache__
 x.py
-database
