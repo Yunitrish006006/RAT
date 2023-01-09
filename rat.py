@@ -5,7 +5,7 @@ import discord.ui
 from discord import app_commands
 from components import log,pickup
 from discord.utils import get
-from components import jobs,job_colors,departments
+from components import jobs,job_colors,departments,department_colors
 from random import randint
 from x import token
 from datetime import datetime
@@ -43,7 +43,7 @@ async def on_ready():
         ENABLED_GUILDS.append(discord.Object(id=guild.id))
     history.println('===================同步伺服器指令中=====================')
     for guild in ENABLED_GUILDS:
-        if(guild.name!=彰化師範大學):
+        if(client.get_guild(guild.id).name!="彰化師範大學"):
             history.println("同步"+client.get_guild(guild.id).name+"指令中....")
             client.tree.copy_global_to(guild=guild)
             await client.tree.sync(guild=guild)
@@ -53,7 +53,7 @@ async def on_ready():
             await client.tree.sync(guild=guild)
     history.println("=====================初始化身分組=======================")
     for go in ENABLED_GUILDS:
-        if(guild.name!=彰化師範大學):
+        if(client.get_guild(guild.id).name!="彰化師範大學"):
             guild = client.get_guild(go.id)
             for selection,color in zip(jobs,job_colors):
                 if selection.emoji == None : role_name = selection.label
