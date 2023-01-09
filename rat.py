@@ -5,7 +5,7 @@ import discord.ui
 from discord import app_commands
 from components import log,pickup
 from discord.utils import get
-from components import jobs,job_colors
+from components import jobs,job_colors,departments
 from random import randint
 from x import token
 from datetime import datetime
@@ -105,6 +105,53 @@ class job_select(discord.ui.Select):
             if current.name.split(".")[1] == self.values[0]: await user.add_roles(current)
             else:  await user.remove_roles(current)
 
+class department_select(discord.ui.Select):
+    def __init__(self,history:log):
+        super().__init__(
+            placeholder ="科系",
+            min_values=1,
+            max_values=1,
+            options=departments
+        )
+    async def callback(self, interaction: discord.Interaction):
+        user = interaction.user
+        guild = interaction.guild
+        ########################################################################
+        def add_userdata(add):
+            out = []
+            lst = [line.strip('\n').split(" ") for line in open(os.getcwd()+'/database/identify.txt').readlines()]
+            for i in lst:
+                cnt = 0
+                #把檔案重複名字更新只留最後一個
+                for j in out:
+                    if i[0]==j[0]:
+                        j[1]=i[1]
+                    else:
+                        cnt+=1
+                if cnt == len(out):
+                    out.append(i)
+            #如果新加入的user名字存在在檔案中 -> 更新檔案
+            cnt = 0
+            for i in out:
+                if add[0]==i[0]:
+                    i[1]=add[1]
+                else:
+                    cnt += 1
+            if cnt == len(out):
+                out.append(add)
+            with open(os.getcwd()+'/database/identify.txt', 'w') as f:
+                for i in out:
+                    f.write(str(i[0])+" "+str(i[1])+"\n")
+        ########################################################################
+        user_name=str(user.name).replace(" ","_")
+        add_userdata([user_name,str(self.values[0])])
+        await interaction.response.send_message(f"{user_name} 選擇了 {self.values[0]} 科系",ephemeral=True)
+        history.println(f"{user_name} 選擇了 {self.values[0]} 科系")
+        for i in self.options:
+            current =  get(guild.roles, name=i.emoji.name+"."+i.label)
+            if current.name.split(".")[1] == self.values[0]: await user.add_roles(current)
+            else:  await user.remove_roles(current)
+
 @client.tree.command(name="隨機分隊",description="將語音頻道中的人分成兩隊")
 async def user_work(interaction: discord.Interaction):
     user_name = (interaction.user.name).replace(" ","_")
@@ -147,7 +194,12 @@ async def joinChannel(interaction: discord.Interaction):
 async def user_work(interaction: discord.Interaction) -> None:
     user_name = (interaction.user.name).replace(" ","_")
     await interaction.response.send_message(f"{user_name},選擇你的職業: ",ephemeral=True,view=discord.ui.View().add_item(job_select(history=history)))
-    
+
+@client.tree.command(name="選擇科系",description="選取你的科系")
+async def user_department(interaction: discord.Interaction) -> None:
+    user_name = (interaction.user.name).replace(" ","_")
+    await interaction.response.send_message(f"{user_name},選擇你的科系: ",ephemeral=True,view=discord.ui.View().add_item(department_select(history=history)))
+
 @client.tree.command(name="工作",description="賺錢")
 async def user_work(interaction: discord.Interaction):
     earned = str(randint(1,100))
