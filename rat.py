@@ -205,4 +205,15 @@ async def report_message(interaction: discord.Interaction, message: discord.Mess
     url_view.add_item(discord.ui.Button(label='前往該訊息', style=discord.ButtonStyle.url, url=message.jump_url))
     await log_channel.send(embed=embed, view=url_view)
 
+@client.tree.context_menu(name='每日金句')
+async def report_message(interaction: discord.Interaction, message: discord.Message):
+    await interaction.response.send_message(f'Thanks for reporting this message by {message.author.mention} to our moderators.',ephemeral=True)
+    log_channel = interaction.guild.get_channel(interaction.channel_id)  # replace with your channel id
+    embed = discord.Embed(title='每日金句')
+    if message.content:
+        embed.description = message.content
+    embed.set_author(name=message.author.display_name, icon_url=message.author.display_avatar.url)
+    embed.timestamp = message.created_at
+    await log_channel.send(embed=embed)
+
 client.run(token)
