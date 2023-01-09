@@ -196,9 +196,13 @@ async def user_work(interaction: discord.Interaction) -> None:
     await interaction.response.send_message(f"{user_name},選擇你的職業: ",ephemeral=True,view=discord.ui.View().add_item(job_select(history=history)))
 
 @client.tree.command(name="選擇科系",description="選取你的科系")
-async def user_department(interaction: discord.Interaction) -> None:
+@app_commands.describe(purview='權限')
+async def user_department(interaction: discord.Interaction,purview:str="private") -> None:
     user_name = (interaction.user.name).replace(" ","_")
-    await interaction.response.send_message(f"{user_name},選擇你的科系: ",ephemeral=True,view=discord.ui.View().add_item(department_select(history=history)))
+    if(purview == "private"):
+        await interaction.response.send_message(f"{user_name},選擇你的科系: ",ephemeral=True,view=discord.ui.View().add_item(department_select(history=history)))
+    elif(purview == "public"):
+        await interaction.response.send_message(f"請選擇你的科系: ",view=discord.ui.View().add_item(department_select(history=history)))
 
 @client.tree.command(name="工作",description="賺錢")
 async def user_work(interaction: discord.Interaction):
