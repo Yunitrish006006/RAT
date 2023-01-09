@@ -57,6 +57,8 @@ departments = [
     discord.SelectOption(label="資工系",emoji="👓",description="資訊工程學系"),
     discord.SelectOption(label="資管系",emoji="🔐",description="資訊管理學系"),
     discord.SelectOption(label="電機系",emoji="🪛",description="電機工程學系"),
-    discord.SelectOption(label="機電系",emoji="⚙️",description="機電工程學系")
+    discord.SelectOption(label="機電系",emoji="⚙️",description="機電工程學系"),
+    discord.SelectOption(label="電子系",emoji="📟",description="電子工程學系")
 ]
+department_colors = [Colour.blue(),Colour.blue(),Colour.blue(),Colour.blue(),Colour.blue()]
 grades = [discord.SelectOption(label=str(i)) for i in range(109,115)]

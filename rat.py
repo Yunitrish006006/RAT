@@ -43,18 +43,32 @@ async def on_ready():
         ENABLED_GUILDS.append(discord.Object(id=guild.id))
     history.println('===================同步伺服器指令中=====================')
     for guild in ENABLED_GUILDS:
-        history.println("同步"+client.get_guild(guild.id).name+"指令中....")
-        client.tree.copy_global_to(guild=guild)
-        await client.tree.sync(guild=guild)
+        if(guild.name!=彰化師範大學):
+            history.println("同步"+client.get_guild(guild.id).name+"指令中....")
+            client.tree.copy_global_to(guild=guild)
+            await client.tree.sync(guild=guild)
+        else:
+            history.println("同步"+client.get_guild(guild.id).name+"指令中....")
+            client.tree.copy_global_to(guild=guild)
+            await client.tree.sync(guild=guild)
     history.println("=====================初始化身分組=======================")
     for go in ENABLED_GUILDS:
-        guild = client.get_guild(go.id)
-        for selection,color in zip(jobs,job_colors):
-            if selection.emoji == None : role_name = selection.label
-            else: role_name = (selection.emoji).name+"."+selection.label
-            if not get(guild.roles,name=role_name): 
-                await guild.create_role(name=role_name,hoist=True,colour=color)
-                history.println("創建 "+role_name+" 至 "+guild.name)
+        if(guild.name!=彰化師範大學):
+            guild = client.get_guild(go.id)
+            for selection,color in zip(jobs,job_colors):
+                if selection.emoji == None : role_name = selection.label
+                else: role_name = (selection.emoji).name+"."+selection.label
+                if not get(guild.roles,name=role_name): 
+                    await guild.create_role(name=role_name,hoist=True,colour=color)
+                    history.println("創建 "+role_name+" 至 "+guild.name)
+        else:
+            guild = client.get_guild(go.id)
+            for selection,color in zip(departments,department_colors):
+                if selection.emoji == None : role_name = selection.label
+                else: role_name = (selection.emoji).name+"."+selection.label
+                if not get(guild.roles,name=role_name): 
+                    await guild.create_role(name=role_name,hoist=True,colour=color)
+                    history.println("創建 "+role_name+" 至 "+guild.name)
         history.println(guild.name+" 初始化完畢")
     history.println("========================================================")
 
