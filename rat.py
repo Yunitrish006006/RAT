@@ -206,8 +206,8 @@ async def report_message(interaction: discord.Interaction, message: discord.Mess
     await log_channel.send(embed=embed, view=url_view)
 
 @client.tree.context_menu(name='每日金句')
-async def report_message(interaction: discord.Interaction, message: discord.Message):
-    await interaction.response.send_message(f'Thanks for reporting this message by {message.author.mention} to our moderators.',ephemeral=True)
+async def dailyQuotes(interaction: discord.Interaction, message: discord.Message):
+    await interaction.response.send_message(f'您已標註金句',ephemeral=True)
     log_channel = interaction.guild.get_channel(interaction.channel_id)  # replace with your channel id
     embed = discord.Embed(title='每日金句')
     if message.content:
