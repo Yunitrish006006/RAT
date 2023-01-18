@@ -236,7 +236,7 @@ async def user_work(interaction: discord.Interaction):
     earned = str(randint(1,100))
     user_name = (interaction.user.name).replace(" ","_")
     with open(os.getcwd()+"/database/works.txt",'a') as work_file:
-        work_file.write(f"earned {user_name} "+earned+"\n")
+        work_file.write(f"{user_name} "+earned+"\n")
     await interaction.response.send_message(f"{user_name} 賺到了 "+earned+" 元\n",ephemeral=True)
     history.println(f"{user_name} 賺到了 "+earned+" 元")
 
