@@ -1,3 +1,4 @@
+from dis import disco
 from typing import Optional
 from unittest import result
 import discord
@@ -26,6 +27,7 @@ class RAT(discord.Client):
         #     self.tree.copy_global_to(guild=guild)
         #     await self.tree.sync(guild=guild)
         print("setting up hook")
+        self.add_view(RPG_status_board_view())
 
 client = RAT(intents=discord.Intents.default())
 history = log(sync_log=True)
@@ -71,7 +73,18 @@ async def on_ready():
                     history.println("創建 "+role_name+" 至 "+guild.name)
         history.println(guild.name+" 初始化完畢")
     history.println("========================================================")
-
+#=================================================================================================
+class RPG_status_board_view(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+    @discord.ui.button(label="refresh",custom_id="RPG_status_board.refresh_button")
+    async def test(self,interaction:discord.Interaction,Button:discord.ui.Button):
+        await interaction.response.edit_message(content=interaction.message.content+"#")
+    
+@client.tree.command(name="test")
+async def test(interaction:discord.Interaction):
+    await interaction.response.send_message(content="button!",view=RPG_status_board_view())
+#=================================================================================================
 class job_select(discord.ui.Select):
     def __init__(self,history:log):
         super().__init__(
